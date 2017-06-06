@@ -12,17 +12,58 @@ use Rest\Classes\Emailer;
 use Rest\Classes\EmailTemplate;
 use Rest\Functions;
 
+/*
+ * Database Structures
+ * eventsList
+ *  id              // numerical event id
+ *  name            // name of event
+ *  category        // category of event
+ *  costMain        // Cost of Main Ticket
+ *  costSecond      // Cost of Second Ticket
+ *  costExtra       // Optional Additional charge, i.e. Wine
+ *  currentGuests   // Current Guest count
+ *  total           // Total number of tickets on sale
+ *  maxGuests       // Max Guests Allowed
+ *  eventDate       // Date of Event
+ *  openDate        // Date of Ticket Sale Opening
+ *  closeDate       // Date of Ticket Sale Closing
+ *  guestDate       // Date Guest limit is removed
+ *  sent            // Event Billing Sent
+ *
+ * bookings
+ *  id              // numerical booking id
+ *  eventid         // numerical event id
+ *  bookingid       // Booking ID (TODO: Remove)
+ *  admin           // Is Admin Booking
+ *  booker          // Booker CRSID
+ *  diet            // Diet
+ *  extra           // Add Extra charge
+ *  name            // Booking Name
+ *  other           // Additional Dietary information
+ *  ticketAssigned  // has ticket or in queue
+ *  type            // Main or Second Ticket
+ */
+
+
+
+
+
+
 class EventsController extends DefaultController
 {
 
     /**
      * Gets the events
+     * If id supplied return event information only
+     * otherwise return events with flag of whether user or admin has a booking
      *
      * @url GET /
      * @url GET /$id
+     *
      * @param string $id
      * @param null $from
      * @param null $to
+     *
      * @return
      */
     public function getData($id = null, $from = null, $to = null)
@@ -38,54 +79,53 @@ class EventsController extends DefaultController
             if ($from && $to) {
                 if ($this->admin)
                 {
-                    $this->db->query('SELECT *
-                                      FROM eventsList
-                                      LEFT JOIN bookings ON eventsList.id = bookings.eventid
+                    $this->db->query( 'SELECT *
+                                      FROM eventsList e
+                                      LEFT JOIN (SELECT eventid,MAX(admin) as ad , IF(MIN(admin)=0,1,0) as user FROM bookings 
+                                      			WHERE booker = :crsid OR admin = 1
+                                      			GROUP BY eventid
+                                      			) AS b
+                                      ON e.id = b.eventid
                                       WHERE (eventDate BETWEEN :to AND :from) 
-                                      AND ((
-                                      bookings.booker =  :crsid
-                                      AND bookings.admin =0
-                                      )
-                                      OR bookings.admin =1)
-                                      GROUP BY eventsList.name, bookings.admin
-                                      ORDER BY  eventsList.id');
+                                      ORDER BY  e.id');
                 }
                 else
                 {
-                    $this->db->query('SELECT *
-                                      FROM eventsList
-                                      LEFT JOIN bookings ON eventsList.id = bookings.eventid
+                    $this->db->query( 'SELECT *
+                                      FROM eventsList e
+                                      LEFT JOIN (SELECT eventid,MAX(admin) as ad , IF(MIN(admin)=0,1,0) as user FROM bookings 
+                                      			WHERE booker = :crsid
+                                      			GROUP BY eventid
+                                      			) AS b
+                                      ON e.id = b.eventid
                                       WHERE (eventDate BETWEEN :to AND :from) 
-                                      AND bookings.booker =  :crsid
-                                      GROUP BY eventsList.name, bookings.admin
-                                      ORDER BY  eventsList.id');
+                                      ORDER BY  e.id');
                 }
                 $this->db->bind(':from', gmdate('Y-m-d H:i:s', Functions\test_input($from)));
                 $this->db->bind(':to', gmdate('Y-m-d H:i:s', Functions\test_input($to)));
             }
             else
             {
-                if ($this->admin)
-                {
-                    $this->db->query('SELECT * 
-                                      FROM eventsList
-                                      LEFT JOIN bookings ON eventsList.id = bookings.eventid
-                                      WHERE (
-                                      bookings.booker =  :crsid
-                                      AND bookings.admin =0
-                                      )
-                                      OR bookings.admin =1
-                                      GROUP BY eventsList.name, bookings.admin
-                                      ORDER BY  eventsList.id');
+                if ($this->admin) {
+	                $this->db->query( 'SELECT *
+                                      FROM eventsList e
+                                      LEFT JOIN (SELECT eventid,MAX(admin) as ad , IF(MIN(admin)=0,1,0) as user FROM bookings 
+                                      			WHERE booker = :crsid OR admin = 1
+                                      			GROUP BY eventid
+                                      			) AS b
+                                      ON e.id = b.eventid
+                                      ORDER BY  e.id');
                 }
                 else
                 {
-                    $this->db->query('SELECT *
-                                      FROM eventsList
-                                      LEFT JOIN bookings ON eventsList.id = bookings.eventid
-                                      WHERE bookings.booker =  :crsid
-                                      GROUP BY eventsList.name, bookings.admin
-                                      ORDER BY  eventsList.id');
+                    $this->db->query( 'SELECT *
+                                      FROM eventsList e
+                                      LEFT JOIN (SELECT eventid,MAX(admin) as ad , IF(MIN(admin)=0,1,0) as user FROM bookings 
+                                      			WHERE booker = :crsid
+                                      			GROUP BY eventid
+                                      			) AS b
+                                      ON e.id = b.eventid
+                                      ORDER BY  e.id');
                 }
             }
             $this->db->bind(':crsid', $this->user);
@@ -153,8 +193,8 @@ class EventsController extends DefaultController
         }
 
         $this->db->query('INSERT INTO eventsList 
-                          (name,category, total, maxGuests, costMain,costSecond,costExtra,eventDate,openDate, closeDate,guestDate) 
-                          VALUES (:name, :category, :total, :guests, :main, :second, :extra, :date, :open, :close, :guestDate)');
+                          (name,category, total,currentGuests, maxGuests, costMain,costSecond,costExtra,eventDate,openDate, closeDate,guestDate,sent) 
+                          VALUES (:name, :category, :total, 0, :guests, :main, :second, :extra, :date, :open, :close, :guestDat, :sent)');
         $this->db->bind(':name', Functions\test_input($data->name));
         $this->db->bind(':category', Functions\test_input($data->category));
         $this->db->bind(':total', Functions\test_input($data->total));
@@ -164,8 +204,9 @@ class EventsController extends DefaultController
         $this->db->bind(':extra', Functions\test_input($data->costExtra));
         $this->db->bind(':date', gmdate('Y-m-d H:i:s', Functions\test_input($data->eventDate)));
         $this->db->bind(':open', gmdate('Y-m-d H:i:s', Functions\test_input($data->openDate)));
-        $this->db->bind(':close', gmdate('Y-m-d H:i:s', Functions\test_input($data->closeDate)));
-        $this->db->bind(':guestDate', gmdate('Y-m-d H:i:s', Functions\test_input($data->guestDate)));
+        $this->db->bind(':close', gmdate('Y-m-d H:i:s', Functions\test_input($data->closeDate ) ) );
+	    $this->db->bind( ':guestDate', gmdate( 'Y-m-d H:i:s', Functions\test_input( $data->guestDate ) ) );
+	    $this->db->bind(':sent', "N");
         $this->db->execute();
         return array("id" => $this->db->lastInsertId());
     }
