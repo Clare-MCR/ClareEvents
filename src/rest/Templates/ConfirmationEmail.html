@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+Dear <?php echo  $row['name']; ?>,
+
+You have been allocated <?php echo $row['total'] ?> ticket(s) for <?php echo $name; ?> on <?php echo $eventDate;?>.
+
+<?php if(($costMain >0 || $costSecond>0) && $noBill): ?>
+<p>Please transfer the cost of the tickets into the Clare College Graduate Society Account, using "<?php echo $row['booker']; ?>-<?php echo $name; ?>-Formal" as your payment reference, before the event.
+If payment is not received within a week then a penalty will be added and/or your booking rights will be removed.
+Account name: Clare College Graduate Society</p>
+Bank: HSBC<br>
+Sort code: 40-16-08<br>
+Account number: 94025067
+<?php endif;?>
+
+<?php if($costMain >0 || $costSecond>0): ?>
+
+<table>
+    <thead>
+    <tr>
+        <td>Item</td><td>Number</td><td>Item Cost</td><td>Total</td>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <?php if((int)$row['Main']>0): ?>
+            <td>Main Ticket</td>
+            <td><?php echo $row['Main']?></td>
+            <td>£<?php echo number_format($costMain,2); ?></td>
+            <td>£<?php echo number_format($costMain*$row['Main'],2); ?></td>
+        <?php endif;?>
+    </tr>
+    <tr>
+        <?php if($row['Second']>0): ?>
+            <td>Guest Ticket</td>
+            <td><?php echo $row['Second']; ?></td>
+            <td>£<?php echo number_format($costSecond,2); ?></td>
+            <td>£<?php echo number_format($costSecond*$row['Second'],2);?></td>
+        <?php endif;?>
+    </tr>
+    <tr>
+        <?php if($row['Extra']>0): ?>
+            <td>Extra Charge</td>
+            <td><?php echo $row['Extra']?></td>
+            <td>£<?php echo number_format($costExtra,2); ?></td>
+            <td>£<?php echo number_format($costExtra*$row['Extra'],2); ?></td>
+        <?php endif;?>
+    </tr>
+    </tbody>
+    <tfoot>
+        <tr>
+            <td>Total</td>
+            <td></td>
+            <td></td>
+            <td>£<?php echo number_format($row['Main']*$costMain+($row['Second']*$costSecond)+$row['Extra']*$costExtra,2); ?></td>
+        </tr>
+    </tfoot>
+</table>
+
+<?php endif; ?>
+Kind regards,<br>
+Clare MCR Committee
+
+</body>
+</html>

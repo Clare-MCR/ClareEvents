@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+This is the official guestlist for the following event:
+<br>
+<strong>Name:</strong> <?php echo $name; ?><br>
+<strong>Date:</strong> <?php echo $eventDate; ?><br>
+<hr>
+
+
+<table>
+    <thead>
+    <tr>
+        <td>Ticket ID</td>
+        <td>Booker</td>
+        <td>Name</td>
+        <?php if($category=="Formal"):?>
+            <td>Diet</td>
+            <td>Diet Other</td>
+        <?php endif; ?>
+        <?php if($costExtra > 0){echo "Extra opt-in";}  ?>
+    </tr>
+    </thead>
+    <tbody>
+    <?php foreach($rows as $row): ?>
+    <tr>
+        <td><?php echo $row['id'] ?></td>
+        <td><?php echo $row['booker'] ?></td>
+        <td><?php echo $row['name'] ?></td>
+        <?php if($category=="Formal"):?>
+            <td><?php echo $row['diet'] ?></td>
+            <td><?php echo $row['other'] ?></td>
+        <?php endif; ?>
+        <?php if($costExtra > 0){echo "<td>".$row['extra']."</td>";}  ?>
+    </tr>
+    <?php endforeach;?>
+    </tbody>
+</table>
+
+</body>
+</html>

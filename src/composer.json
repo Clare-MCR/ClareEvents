@@ -23,7 +23,7 @@
     }
   ],
   "config": {
-    "vendor-dir": "src/rest/vendor"
+    "vendor-dir": "rest/vendor"
   },
   "minimum-stability": "dev",
   "require": {
@@ -39,8 +39,9 @@
   },
   "autoload": {
     "classmap" : [
-      "public_html/rest/Controllers/",
-      "public_html/rest/Classes/"
+      "rest/Controllers/",
+      "rest/Classes/",
+      "rest/Functions/"
     ]
   }
 }

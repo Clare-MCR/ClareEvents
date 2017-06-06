@@ -14,7 +14,7 @@
 
   var config = {
     appErrorPrefix: '[clarePunts Error] ',
-    appTitle: 'Clare Punts'
+    appTitle: 'Clare MCR Events'
   };
 
   core.value('config', config);

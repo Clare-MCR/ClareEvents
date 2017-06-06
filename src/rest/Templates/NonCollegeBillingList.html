@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+This is the official non-College bill list for the following event:
+
+<br>
+<strong>Name:</strong> <?php echo $name; ?><br>
+<strong>Date:</strong> <?php echo $eventDate; ?><br>
+<strong>Full price ticket:</strong> £<?php echo number_format($costMain,2); ?><br>
+<strong>Guest price ticket:</strong> £<?php echo number_format($costSecond,2); ?><br>
+<?php if($costExtra > 0)
+{
+echo "<strong>Extra cost:</strong> £". number_format($costExtra,2);
+}
+?>
+<hr>
+These people have been emailed automatically with Bank Transfer details.
+<hr>
+
+<br>
+<table>
+    <thead>
+    <tr>
+        <td>Booker</td>
+        <td>Name</td>
+        <td>Total Tickets</td>
+        <td>Number Full Price</td>
+        <td>Number Second Price</td>
+        <?php if($costExtra > 0){echo "Number Extra Charge";}  ?>
+        <td>Money Owed(£)</td>
+    </tr>
+    </thead>
+    <tbody>
+    <?php foreach($rows as $row): ?>
+    <tr>
+        <td><?php echo $row['booker'] ?></td>
+        <td><?php echo $row['name'] ?></td>
+        <td><?php echo $row['total'] ?></td>
+        <td><?php echo $row['Main'] ?></td>
+        <td><?php echo $row['Second'] ?></td>
+        <?php if($costExtra > 0){echo "<td>".$row['Extra']."</td>";}  ?>
+        <td><?php echo number_format($row['Main']*$costMain+($row['Second']*$costSecond)+$row['Extra']*$costExtra,2); ?></td>
+    </tr>
+    <?php endforeach;?>
+    </tbody>
+</table>
+
+
+</body>
+</html>

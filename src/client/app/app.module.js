@@ -6,11 +6,11 @@
     'app.widgets',
     'app.admin',
     'app.dashboard',
-    'app.mySettings',
-    'app.bookings',
+    //'app.mySettings',
+    //'app.bookings',
     'app.layout',
-    'app.data',
-    'app.info'
+    'app.data'
+    //'app.info'
     //'app.charts'
   ]);
 

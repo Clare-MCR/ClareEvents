@@ -49,11 +49,9 @@
         templateOptions: {
           label: 'User Type:',
           options: [
-            {name: 'MCR', value: 'MCR'},
-            {name: 'Porter', value: 'PORTER'},
-            {name: 'UCS', value: 'UCS'},
-            {name: 'Staff', value: 'STAFF'},
-            {name: 'Fellow', value: 'FELLOW'},
+            {name: 'Full MCR member', value: 'MCR'},
+            {name: 'Associate MCR member', value: 'ASSOCIATE'},
+            {name: 'CRA', value: 'CRA'},
             {name: 'Admin', value: 'admin'},
             {name: 'All', value: null}
           ]
@@ -80,11 +78,9 @@
           label: 'User Type:',
           required: true,
           options: [
-            {name: 'MCR', value: 'MCR'},
-            {name: 'Porter', value: 'PORTER'},
-            {name: 'UCS', value: 'UCS'},
-            {name: 'Staff', value: 'STAFF'},
-            {name: 'Fellow', value: 'FELLOW'}
+            {name: 'Full MCR member', value: 'MCR'},
+            {name: 'Associate MCR member', value: 'ASSOCIATE'},
+            {name: 'CRA', value: 'CRA'}
           ]
         }
       }
@@ -98,11 +94,10 @@
           label: 'Delete:',
           required: true,
           options: [
-            {name: 'MCR', value: 'MCR'},
-            {name: 'Porter', value: 'PORTER'},
-            {name: 'UCS', value: 'UCS'},
-            {name: 'Staff', value: 'STAFF'},
-            {name: 'Fellow', value: 'FELLOW'},
+            {name: 'Full MCR member', value: 'MCR'},
+            {name: 'Associate MCR member', value: 'ASSOCIATE'},
+            {name: 'CRA', value: 'CRA'},
+            {name: 'Admin', value: 'admin'},
             {name: 'All', value: null}
           ]
         }

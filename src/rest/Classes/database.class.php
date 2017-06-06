@@ -1,4 +1,4 @@
-<?php
+<?php namespace Rest\Classes;
 /**
  * PDO Database class for mysql copied from:
  * http://culttt.com/2012/10/01/roll-your-own-pdo-php-class/
@@ -7,6 +7,8 @@
  * @created 5/9/2014
  * @Modified 5/9/2014
  */
+
+use \PDO;
 class Database{
 	/**
  	 * Define Private variables

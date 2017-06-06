@@ -5,13 +5,13 @@
     .module('app.dashboard')
     .controller('DashboardController', DashboardController);
 
-  DashboardController.$inject = ['bookingsPrepService', 'puntsPrepService', 'logger', '$state'];
+  DashboardController.$inject = [/*'bookingsPrepService', 'puntsPrepService',*/ 'logger', '$state'];
   /* @ngInject */
-  function DashboardController(bookingsPrepService, puntsPrepService, logger, $state) {
+  function DashboardController(/*bookingsPrepService, puntsPrepService,*/ logger, $state) {
     var vm = this;
     vm.title = 'Status Today';
-    vm.punts = puntsPrepService;
-    vm.bookings = bookingsPrepService;
+    //vm.punts = puntsPrepService;
+    //vm.bookings = bookingsPrepService;
 
     activate();
 
