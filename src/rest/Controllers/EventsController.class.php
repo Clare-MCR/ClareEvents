@@ -189,7 +189,7 @@ class EventsController extends DefaultController
             throw new RestException(404, 'close date required');
         }
         if (!isset($data->guestDate)) {
-            throw new RestException(404, 'guest date required');
+	        $data->guestDate = $data->closeDate;
         }
 
         $this->db->query('INSERT INTO eventsList 
@@ -342,7 +342,16 @@ class EventsController extends DefaultController
                 $error = true;
             }
         }
-
+	    if ( ! $error && isset( $data->guestDate ) ) {
+		    $this->db->query( 'UPDATE eventsList SET guestDate=:guestDate WHERE id=:id' );
+		    $this->db->bind( ':guestDate', gmdate( 'Y-m-d H:i:s', Functions\test_input( $data->guestDate ) ) );
+		    $this->db->bind( ':id', $id );
+		    try {
+			    $this->db->execute();
+		    } catch ( PDOException $e ) {
+			    $error = true;
+		    }
+	    }
 
         if ($error) {
             $this->db->cancelTransaction();
@@ -373,9 +382,17 @@ class EventsController extends DefaultController
         $this->db->bind(':id', $id);
         try {
             $this->db->execute();
-            return true;
-        } catch (PDOException $e) {
-            throw new RestException(409, 'Error deleting');
+	        $this->db->query( 'DELETE FROM bookings WHERE eventid=:id' );
+	        $this->db->bind( ':id', $id );
+	        try {
+		        $this->db->execute();
+
+		        return true;
+	        } catch ( PDOException $e ) {
+		        throw new RestException( 409, 'Error deleting Bookings' );
+	        }
+        } catch ( PDOException $e ) {
+	        throw new RestException( 409, 'Error deleting Event' );
         }
     }
 
