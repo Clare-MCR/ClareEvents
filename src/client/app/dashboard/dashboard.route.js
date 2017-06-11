@@ -21,11 +21,11 @@
           controller: 'DashboardController',
           controllerAs: 'vm',
           title: 'Home',
-          //resolve: {
+          resolve: {
           /* @ngInject */
-          /* puntsPrepService: puntsPrepService,
-           bookingsPrepService: bookingsPrepService*/
-          //},
+            eventsPrepService: eventsPrepService
+            // bookingsPrepService: bookingsPrepService*/
+          },
           settings: {
             nav: 1,
             content: '<i class="fa fa-dashboard"></i> Dashboard'
@@ -36,8 +36,8 @@
   }
 
   /* @ngInject */
-  /*function puntsPrepService(PuntsServices) {
-   return PuntsServices.query().$promise;
+  function eventsPrepService(EventsServices) {
+    return EventsServices.query().$promise;
    }
 
    /* @ngInject */

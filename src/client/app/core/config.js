@@ -13,7 +13,7 @@
   }
 
   var config = {
-    appErrorPrefix: '[clarePunts Error] ',
+    appErrorPrefix: '[ClareEvents Error] ',
     appTitle: 'Clare MCR Events'
   };
 

@@ -18,5 +18,13 @@
     function activate() {
       logger.info('Viewing ' + $state.current.title);
     }
+
+    function getuser() {
+      vm.user = UserServices.get(
+        function (data) {
+          vm.admin = data.admin === '1';
+        }
+      );
+    }
   }
 })();
