@@ -70,7 +70,7 @@ class EventsController extends DefaultController
     {
         if($id)
         {
-            $this->db->query('SELECT * FROM eventsList WHERE id=:id');
+	        $this->db->query( 'SELECT * FROM eventsList WHERE id=:id ORDER BY  id ASC' );
             $this->db->bind(':id', $id);
             return $this->db->single();
         }
@@ -87,7 +87,7 @@ class EventsController extends DefaultController
                                       			) AS b
                                       ON e.id = b.eventid
                                       WHERE (eventDate BETWEEN :to AND :from) 
-                                      ORDER BY  e.id');
+                                      ORDER BY  e.id ASC' );
                 }
                 else
                 {
@@ -99,7 +99,7 @@ class EventsController extends DefaultController
                                       			) AS b
                                       ON e.id = b.eventid
                                       WHERE (eventDate BETWEEN :to AND :from) 
-                                      ORDER BY  e.id');
+                                      ORDER BY  e.id ASC' );
                 }
                 $this->db->bind(':from', gmdate('Y-m-d H:i:s', Functions\test_input($from)));
                 $this->db->bind(':to', gmdate('Y-m-d H:i:s', Functions\test_input($to)));
@@ -114,7 +114,7 @@ class EventsController extends DefaultController
                                       			GROUP BY eventid
                                       			) AS b
                                       ON e.id = b.eventid
-                                      ORDER BY  e.id');
+                                      ORDER BY  e.id ASC' );
                 }
                 else
                 {
@@ -125,7 +125,7 @@ class EventsController extends DefaultController
                                       			GROUP BY eventid
                                       			) AS b
                                       ON e.id = b.eventid
-                                      ORDER BY  e.id');
+                                      ORDER BY  e.id ASC' );
                 }
             }
             $this->db->bind(':crsid', $this->user);
@@ -434,9 +434,10 @@ class EventsController extends DefaultController
                 print("error getting event");
             }
         }
+	    //reset tickets assigned
         if(!$error && $email)
         {
-            $this->db->query('UPDATE bookings SET ticketAssigned=0 WHERE eventid=:id ');
+	        $this->db->query( 'UPDATE bookings SET ticketAssigned=0 WHERE eventid=:id' );
             $this->db->bind(':id',$id);
             try {
                 $this->db->execute();
@@ -445,9 +446,12 @@ class EventsController extends DefaultController
                 print("error resetting tickets");
             }
         }
+	    // TODO: Make sure number of guests per person does not exceed event limits
+
+	    //asign tickets to first
         if(!$error && $email)
         {
-            $this->db->query('UPDATE bookings SET ticketAssigned=1 WHERE eventid=:id ORDER BY id LIMIT :total');
+	        $this->db->query( 'UPDATE bookings SET ticketAssigned=1 WHERE eventid=:id ORDER BY id Asc LIMIT :total' );
             $this->db->bind(':id',$id);
             $this->db->bind(':total',(int)$event['total']);
             try {
@@ -458,9 +462,10 @@ class EventsController extends DefaultController
                 print("error setting tickets");
             }
         }
+	    //get billing list
         if(!$error && $email)
         {
-            $this->db->query('SELECT \'MCR\' AS booker,\'MCR Admin Booking\' as name,COUNT(type) AS total,SUM(type) AS Main, 
+	        $this->db->query( "SELECT 'MCR' AS booker,'MCR Admin Booking' as name,COUNT(type) AS total,SUM(type) AS Main, 
                               COUNT(type)-SUM(type) AS Second, SUM(extra) AS Extra
                               FROM `bookings` WHERE eventid=:id AND admin=1 AND ticketAssigned=1
                               GROUP BY admin
@@ -471,7 +476,15 @@ class EventsController extends DefaultController
                               LEFT JOIN users 
                               ON users.crsid=bookings.booker 
                               WHERE eventid=:id AND bookings.admin=0 AND bill=1 AND ticketAssigned=1
-                              GROUP BY booker');
+                              GROUP BY booker
+                              UNION ALL
+                              SELECT 'MCR', 'MCR non-College Bill',COUNT(bookings.type) AS total,SUM(bookings.type) AS Main, 
+                              COUNT(bookings.type)-SUM(bookings.type) AS Second, SUM(extra) AS Extra
+                              FROM bookings 
+                              LEFT JOIN users 
+                              ON users.crsid=bookings.booker 
+                              WHERE eventid=:id AND bookings.admin=0 AND (bill IS NULL OR bill=0) AND ticketAssigned=1
+                              GROUP BY booker" );
             $this->db->bind(':id',$id);
             try {
                 $officialBill = $this->db->resultset();
@@ -488,7 +501,7 @@ class EventsController extends DefaultController
                               FROM bookings 
                               LEFT JOIN users 
                               ON users.crsid=bookings.booker 
-                              WHERE eventid=:id AND bookings.admin=0 AND bill=0 AND ticketAssigned=1
+                              WHERE eventid=:id AND bookings.admin=0 AND (bill IS NULL OR bill=0) AND ticketAssigned=1
                               GROUP BY booker');
             $this->db->bind(':id',$id);
             try {
@@ -498,7 +511,6 @@ class EventsController extends DefaultController
                 print("error getting other billing");
             }
         }
-        // TODO: Make sure number of guests per person does not exceed event limits
         if(!$error)
         {
             $this->db->query('
