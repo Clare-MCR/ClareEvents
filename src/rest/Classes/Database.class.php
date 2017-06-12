@@ -8,7 +8,8 @@
  * @Modified 5/9/2014
  */
 
-use \PDO;
+use PDO;
+
 class Database{
 	/**
  	 * Define Private variables

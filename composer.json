@@ -28,7 +28,8 @@
   "minimum-stability": "dev",
   "require": {
     "php": ">=5.3.3",
-    "jacwright/restserver": "dev-master"
+    "jacwright/restserver": "dev-master",
+    "Katzgrau/KLogger": "dev-master"
   },
   "scripts": {
     "test": [
@@ -39,8 +40,8 @@
   },
   "autoload": {
     "classmap" : [
-      "public_html/rest/Controllers/",
-      "public_html/rest/Classes/"
+      "src/rest/Controllers/",
+      "src/rest/Classes/"
     ]
   }
 }

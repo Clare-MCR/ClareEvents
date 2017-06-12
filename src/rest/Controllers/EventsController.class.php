@@ -110,7 +110,7 @@ class EventsController extends DefaultController
 	                $this->db->query( 'SELECT *
                                       FROM eventsList e
                                       LEFT JOIN (SELECT eventid,MAX(admin) as ad , IF(MIN(admin)=0,1,0) as user FROM bookings 
-                                      			WHERE booker = :crsid OR admin = 1
+                                      			WHERE booker=:crsid OR admin=1
                                       			GROUP BY eventid
                                       			) AS b
                                       ON e.id = b.eventid

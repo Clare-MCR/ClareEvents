@@ -1,5 +1,5 @@
 {
-  "name": "Clare-MCR/ClareEvents",
+  "name": "clare-mcr/clare-events",
   "version": "1.0.0",
   "type": "project",
   "description": "Clare Events AngularJS project",
@@ -28,7 +28,8 @@
   "minimum-stability": "dev",
   "require": {
     "php": ">=5.3.3",
-    "jacwright/restserver": "dev-master"
+    "jacwright/restserver": "dev-master",
+    "Katzgrau/KLogger": "1.2.*"
   },
   "scripts": {
     "test": [

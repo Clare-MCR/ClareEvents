@@ -4,8 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "3f5a9a24baa0a752adca42a72e46850e",
-    "content-hash": "f3d7d4801d02789887dc5a1ab7bc2a19",
+    "content-hash": "8716f298953a7c069c05d0c22236e8b5",
     "packages": [
         {
             "name": "jacwright/restserver",
@@ -57,7 +56,7 @@
         },
         {
             "name": "katzgrau/klogger",
-            "version": "dev-master",
+            "version": "1.2.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/katzgrau/KLogger.git",
@@ -103,7 +102,7 @@
             "keywords": [
                 "logging"
             ],
-            "time": "2016-11-07 19:29:14"
+            "time": "2016-11-07T19:29:14+00:00"
         },
         {
             "name": "psr/log",
@@ -157,8 +156,7 @@
     "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
-        "jacwright/restserver": 20,
-        "katzgrau/klogger": 20
+        "jacwright/restserver": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,

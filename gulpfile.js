@@ -108,6 +108,18 @@ gulp.task('rest', ['clean-rest'], function () {
     .pipe(gulp.dest(config.build + 'rest'));
 });
 
+/**
+ * Copy rest server
+ * @return {Stream}
+ */
+gulp.task('restfast', function () {
+    log('copying rest php server');
+
+    return gulp
+        .src(config.restPhp)
+        .pipe(gulp.dest(config.build + 'rest'));
+});
+
 gulp.task('less-watcher', function () {
   gulp.watch([config.less], ['styles']);
 });
