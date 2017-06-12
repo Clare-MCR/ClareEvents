@@ -5,9 +5,9 @@
     .module('app.dashboard')
     .controller('DashboardController', DashboardController);
 
-  DashboardController.$inject = [/*'bookingsPrepService', 'puntsPrepService',*/ 'logger', '$state'];
+    DashboardController.$inject = [/*'bookingsPrepService',*/ 'eventsPrepService', 'logger', '$state'];
   /* @ngInject */
-  function DashboardController(/*bookingsPrepService, puntsPrepService,*/ logger, $state) {
+    function DashboardController(/*bookingsPrepService,*/eventsPrepService, logger, $state) {
     var vm = this;
     vm.title = 'Status Today';
     //vm.punts = puntsPrepService;
@@ -20,7 +20,7 @@
     }
 
     function getuser() {
-      vm.user = UserServices.get(
+        vm.user = eventsPrepService.get(
         function (data) {
           vm.admin = data.admin === '1';
         }

@@ -9,7 +9,7 @@
 
   /* @ngInject */
   function EventsServices(cachedResource) {
-    return cachedResource('rest/events/:Eid/:Sid', {Eid: '@crsid'}, {});
+      return cachedResource('rest/events/:Eid/:Sid', {Eid: '@eid'}, {});
   }
 
 })();

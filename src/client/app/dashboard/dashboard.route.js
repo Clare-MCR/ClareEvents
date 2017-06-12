@@ -23,7 +23,8 @@
           title: 'Home',
           resolve: {
           /* @ngInject */
-            eventsPrepService: eventsPrepService
+              eventsPrepService: eventsPrepService,
+              usersPrepService: usersPrepService
             // bookingsPrepService: bookingsPrepService*/
           },
           settings: {
@@ -37,9 +38,13 @@
 
   /* @ngInject */
   function eventsPrepService(EventsServices) {
-    return EventsServices.query().$promise;
+      return EventsServices.get().$promise;
    }
 
+  /* @ngInject */
+    function usersPrepService(UserServices) {
+        return UserServices.get().$promise;
+    }
    /* @ngInject */
   /*function bookingsPrepService(BookingServices) {
    return BookingServices.query().$promise;
