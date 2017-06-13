@@ -103,6 +103,10 @@ class RestServer
 		throw new RestException(401, "You are not authorized to access this resource.");
 	}
 
+	public function options()
+	{
+		throw new RestException(200, "authorized");
+	}
 
 	public function handle()
 	{
@@ -110,8 +114,13 @@ class RestServer
 		$this->method = $this->getMethod();
 		$this->format = $this->getFormat();
 
-		if ($this->method == 'PUT' || $this->method == 'POST') {
+		if ($this->method == 'PUT' || $this->method == 'POST' || $this->method == 'PATCH') {
 			$this->data = $this->getData();
+		}
+
+		//preflight requests response 
+		if($this->method == 'OPTIONS' && getallheaders()['Access-Control-Request-Headers']){
+			$this->sendData($this->options());
 		}
 
 		list($obj, $method, $params, $this->params, $noAuth) = $this->findUrl();
@@ -313,7 +322,7 @@ class RestServer
 		foreach ($methods as $method) {
 			$doc = $method->getDocComment();
 			$noAuth = strpos($doc, '@noAuth') !== false;
-			if (preg_match_all('/@url[ \t]+(GET|POST|PUT|DELETE|HEAD|OPTIONS)[ \t]+\/?(\S*)/s', $doc, $matches, PREG_SET_ORDER)) {
+			if (preg_match_all('/@url[ \t]+(GET|POST|PUT|PATCH|DELETE|HEAD|OPTIONS)[ \t]+\/?(\S*)/s', $doc, $matches, PREG_SET_ORDER)) {
 
 				$params = $method->getParameters();
 
@@ -358,7 +367,9 @@ class RestServer
 			$method = 'PUT';
 		} elseif ($method == 'POST' && strtoupper($override) == 'DELETE') {
 			$method = 'DELETE';
-		}
+		} elseif ($method == 'POST' && strtoupper($override) == 'PATCH') {
+            $method = 'PATCH';
+        }
 		return $method;
 	}
 
@@ -426,10 +437,14 @@ class RestServer
 				}
 			}
 			$options = 0;
-			if ($this->mode == 'debug') {
+			if ($this->mode == 'debug' && defined('JSON_PRETTY_PRINT')) {
 				$options = JSON_PRETTY_PRINT;
 			}
-			$options = $options | JSON_UNESCAPED_UNICODE;
+
+			if (defined('JSON_UNESCAPED_UNICODE')) {
+				$options = $options | JSON_UNESCAPED_UNICODE;
+			}
+
 			echo json_encode($data, $options);
 		}
 	}
