@@ -38,7 +38,7 @@
 
   /* @ngInject */
   function eventsPrepService(EventsServices) {
-      return EventsServices.get().$promise;
+      return EventsServices.query().$promise;
    }
 
   /* @ngInject */

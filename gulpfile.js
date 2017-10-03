@@ -4,6 +4,9 @@ var config = require('./gulp.config')();
 var del = require('del');
 var glob = require('glob');
 var gulp = require('gulp');
+var sourcemaps = require('gulp-sourcemaps');
+var babel = require('gulp-babel');
+var concat = require('gulp-concat');
 var path = require('path');
 var _ = require('lodash');
 var $ = require('gulp-load-plugins')({lazy: true});
@@ -27,7 +30,21 @@ var port = process.env.PORT || config.defaultPort;
  * List the available gulp tasks
  */
 gulp.task('help', $.taskListing);
-gulp.task('default', ['help']);
+//gulp.task('default', ['help']);
+
+gulp.task('default', function () {
+  //Whatever build process' go here.
+  var jsdoc = require('gulp-jsdoc');
+  gulp.src('./src/*.js').pipe(jsdoc('./documentation'));//Simply building docs
+
+  //Actual needed change.
+  gulp.src('./src/*.js')//Get src
+    .pipe(sourcemaps.init())//Run through sourcemaps. Optional
+    .pipe(babel())//Run through babel
+    .pipe(concat('all.js'))//Concatenate files into one deliverable.
+    .pipe(sourcemaps.write('.'))//Write sourcemaps
+    .pipe(gulp.dest('dist'));//Write to folder all.js so we have dist/all.js
+});
 
 /**
  * vet the code and create coverage report
